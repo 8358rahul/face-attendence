@@ -1,0 +1,13 @@
+flask
+deepface
+numpy
+pandas
+tensorflow
+keras
+matplotlib
+opencv-python-headless
+python-dotenv 
+Flask-SQLAlchemy
+psycopg2-binary
+flask-migrate
+psycopg2-binary
