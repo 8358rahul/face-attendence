@@ -1,4 +1,4 @@
-flask
+flask[async]
 deepface
 numpy
 pandas

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from deepface import DeepFace 
 import os
+from routes.helper import allowed_file,secure_filename,cleanup_files
 
 verify_face_bp = Blueprint('verify_face_route', __name__)
 
@@ -20,6 +21,8 @@ def verify_face():
         # Retrieve uploaded files
         img1 = request.files['img1']
         img2 = request.files['img2']
+        
+        
 
         # Validate the file types (optional but recommended)
         if not allowed_file(img1.filename) or not allowed_file(img2.filename):
@@ -30,7 +33,7 @@ def verify_face():
         img2_path = os.path.join(TEMP_DIR, secure_filename(img2.filename))
         img1.save(img1_path)
         img2.save(img2_path)
-
+    
         # Perform face verification
         result = DeepFace.verify(img1_path=img1_path, img2_path=img2_path, model_name="Facenet", detector_backend="mtcnn")
 
@@ -60,17 +63,3 @@ def verify_face():
             os.remove(img2_path)
         return jsonify({"error": str(e)}), 500
 
-def allowed_file(filename):
-    """Validate if the uploaded file is of an allowed type"""
-    allowed_extensions = {'png', 'jpg', 'jpeg'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-
-def secure_filename(filename):
-    """Generate a safe version of the filename"""
-    return filename.replace(" ", "_").replace("/", "_").lower()
-
-def cleanup_files(file_paths):
-    """Remove temporary files"""
-    for file_path in file_paths:
-        if os.path.exists(file_path):
-            os.remove(file_path)
