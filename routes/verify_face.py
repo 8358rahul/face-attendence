@@ -33,7 +33,7 @@ def verify_face():
         img2_path = os.path.join(TEMP_DIR, secure_filename(img2.filename))
         img1.save(img1_path)
         img2.save(img2_path)
-    
+
         # Perform face verification
         result = DeepFace.verify(img1_path=img1_path, img2_path=img2_path, model_name="Facenet", detector_backend="mtcnn")
 

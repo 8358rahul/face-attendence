@@ -38,7 +38,6 @@ def mark_attendance():
         return jsonify({"error": "Profile verification pending!"}), 500
     try:
         # Perform face verification
-     
         result = DeepFace.verify(
             img1_path=stored_photo_path,
             img2_path=uploaded_photo_path,
@@ -94,16 +93,23 @@ def mark_attendance():
 
 @attendance_bp.route('/get_attendance/<email>', methods=['GET'])
 def get_attendance(email):
-    print("hello")
+
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"error": "User not found!"}), 404
 
     attendances = Attendance.query.filter_by(user_id=user.id).all()
+    
     return jsonify({
-        "firstName": user.firstName,
-        "lastName": user.lastName,
-        "attendances": [
-            {"date": att.date.strftime("%Y-%m-%d"), "status": att.status} for att in attendances
-        ]
-    })
+    "firstName": user.firstName,
+    "lastName": user.lastName,
+    "attendances": [
+        {
+            "date": att.date.strftime("%Y-%m-%d") if att.date else None,
+            "check_in_time": att.check_in_time.strftime('%H:%M:%S') if att.check_in_time else None,
+            "check_out_time": att.check_out_time.strftime('%H:%M:%S') if att.check_out_time else None,
+            "status": att.status
+        } for att in attendances
+    ]
+})
+
